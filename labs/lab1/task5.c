@@ -1,11 +1,9 @@
 
 #include <stdio.h>
 
-int main(void)
-{
-    char filename[] = "";
+int main (int argc, char * argv[]) {
+    char *filename = argv[1];
     char buffer[256];
-    scanf("%s", &filename);
     FILE *fp = fopen(filename, "r");
     if(fp)
     {
@@ -14,5 +12,6 @@ int main(void)
             printf("%s", buffer);
         }
         fclose(fp);
-    } 
+    }
+    return 0;
 }
