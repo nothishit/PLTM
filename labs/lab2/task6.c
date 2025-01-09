@@ -1,9 +1,8 @@
-
 #include <stdio.h>
 #include <stdbool.h>
 
 // Максимальная вместимость стека
-#define MAX_SIZE 100
+#define MAX_SIZE 3
 
 typedef struct {
     int arr[MAX_SIZE];  
@@ -27,11 +26,11 @@ bool isFull(Stack *stack) {
 
 void push(Stack *stack, int value) {
     if (isFull(stack)) {
-        printf("Стек переполнен\n");
+        printf("Стек переполнен, элемент не был добавлен\n");
         return;
     }
     stack->arr[++stack->top] = value;
-    printf("Pushed %d onto the stack\n", value);
+    printf("Добавлен %d в стек\n", value);
 }
 
 // Извлечь элемент из стека
@@ -42,7 +41,7 @@ int pop(Stack *stack) {
     }
     int popped = stack->arr[stack->top];
     stack->top--;
-    printf("Popped %d from the stack\n", popped);
+    printf("Удалён элемент %d из стека\n", popped);
     
     return popped;
 }
@@ -62,11 +61,13 @@ int main() {
     initialize(&stack);  
 
     push(&stack, 3);
-    printf("Верхний элемент: %d\n", peek(&stack));
-
+    push(&stack, 4);
+    push(&stack, 5);
+    push(&stack, 5);
+    
     while (!isEmpty(&stack)) {
-        printf("Top element: %d\n", peek(&stack));
-        printf("Popped element: %d\n", pop(&stack));
+        printf("Верхний элемент: %d\n", peek(&stack));
+        pop(&stack);
     }
 
     return 0;
