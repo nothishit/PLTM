@@ -44,25 +44,32 @@ int main()
         fclose(file);
     }
     
+    struct Product products[count];
+    
     FILE *file1 = fopen("products.txt", "r");
-    if(file)
+    if(file1)
     {
         int i = 0;
-        struct Product products[count];
-        
-        while((fgets(buffer, 256, file))!=NULL)
+        while((fgets(buffer, 256, file1))!=NULL)
         {
             sscanf(buffer, "%s %f", products[i].name, &products[i].price);
             i++;
         }
-        fclose(file);
-        
+        fclose(file1);
+    }
+    
+    
+    FILE *file2 = fopen("sorted_products.txt", "w");
+    if(file2)
+    {
         int size = (int)(sizeof(products)/sizeof(struct Product));
         
         PriceSort(products, size);
         
         for (int i = 0; i < size; i++)
-            printf("%s %.2f ", products[i].name, products[i].price);
+            fprintf(file, "%s %.2f \n", products[i].name, products[i].price);
+        
+        fclose(file2);
     }
     
     return 0;
