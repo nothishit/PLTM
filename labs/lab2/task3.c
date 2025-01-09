@@ -15,7 +15,7 @@ int main()
     
     for (int i = 0; i < size; i++)
     {
-        float x = (float)rand()/(float)(RAND_MAX);
+        float x = ((float)rand() / RAND_MAX) * (max - min) + min;
         arr[i] = x;
         if (i < size-1) 
         {
