@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_SIZE 100
 
@@ -22,7 +23,7 @@ char pop(Stack *s) {
 }
 
 int isOperand(char c) {
-    return (c >= '0' && c <= '9');
+    return isdigit(c);  // Проверка, является ли символ цифрой
 }
 
 int precedence(char c) {
@@ -37,41 +38,50 @@ int precedence(char c) {
 void infixToPostfix(char *infix, char *postfix) {
     Stack s;
     init(&s);
-    int k = 0;
-    for (int i = 0; infix[i] != '\0'; i++) {
+    int k = 0;  // Индекс для постфиксной записи
+    int i = 0;  // Индекс для инфиксной записи
+    while (infix[i] != '\0') {
         if (infix[i] == '(') {
             push(&s, '(');
         } else if (infix[i] == ')') {
             while (s.top != -1 && s.items[s.top] != '(') {
                 postfix[k++] = pop(&s);
+                postfix[k++] = ' ';  // Добавляем пробел после оператора
             }
-            pop(&s); // Discard '('
+            pop(&s);  // Отбрасываем '('
         } else if (isOperand(infix[i])) {
-            postfix[k++] = infix[i];
+            // Обработка многозначного числа
+            while (isOperand(infix[i])) {
+                postfix[k++] = infix[i++];  // Добавляем цифру в постфиксную запись
+            }
+            postfix[k++] = ' ';  // Добавляем пробел после числа
+            continue;  // Продолжаем цикл с новой позицией
         } else {
             while (s.top != -1 && precedence(s.items[s.top]) >= precedence(infix[i])) {
                 postfix[k++] = pop(&s);
+                postfix[k++] = ' ';  // Добавляем пробел после оператора
             }
             push(&s, infix[i]);
         }
+        i++;
     }
     while (s.top != -1) {
         postfix[k++] = pop(&s);
+        postfix[k++] = ' ';  // Добавляем пробел после оператора
     }
-    postfix[k] = '\0';
+    if (k > 0) {
+        postfix[k - 1] = '\0';  // Заменяем последний пробел на нуль-терминатор
+    } else {
+        postfix[0] = '\0';  // Пустой результат
     }
+}
 
 int main() {
-    char infix1[] = "(4+5)*6";
+    char infix1[] = "(14+5)*6";
     char postfix1[MAX_SIZE];
     infixToPostfix(infix1, postfix1);
-    printf("Infix expression: %s\n", infix1);
-    printf("Postfix expression: %s\n\n", postfix1);
+    printf("Инфикс: %s\n", infix1);
+    printf("Постфикс: %s\n", postfix1);
 
     return 0;
 }
-
-
-
-
-
