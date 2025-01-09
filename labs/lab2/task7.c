@@ -1,70 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>  // Для функции isdigit
 
-#include <stdio.h>  
-#include <stdlib.h>  
 #define MAX_SIZE 100  
-// Stack implementation  
+
 int stack[MAX_SIZE];  
 int top = -1;  
+
 void push(int item) {  
     if (top >= MAX_SIZE - 1) {  
-        printf("Stack Overflow\n");  
+        printf("Стек переполнен\n");  
         return;  
     }  
-    top++;  
-    stack[top] = item;  
+    stack[++top] = item;  
 }  
+
 int pop() {  
     if (top < 0) {  
-        printf("Stack Underflow\n");  
+        printf("Стек пуст\n");  
         return -1;  
     }  
-    int item = stack[top];  
-    top--;  
-    return item;  
+    return stack[top--];  
 }  
+
 int is_operator(char symbol) {  
-    if (symbol == '+' || symbol == '-' || symbol == '*' || symbol == '/') {  
-        return 1;  
-    }  
-    return 0;  
+    return (symbol == '+' || symbol == '-' || symbol == '*' || symbol == '/');  
 }  
+
 int evaluate(char* expression) {  
     int i = 0;  
-    char symbol = expression[i];  
-    int operand1, operand2, result;  
-  
-    while (symbol != '\0') {  
-        if (symbol >= '0' && symbol <= '9') {  
-            int num = symbol - '0';  
-            push(num);
+    char symbol;  
+    int operand1, operand2, result;
+
+    while ((symbol = expression[i]) != '\0') {
+        if (isspace(symbol)) {  // Пропускаем пробелы
+            i++;
+            continue;
+        }
+        
+        if (isdigit(symbol)) {  // Проверяем, является ли символ цифрой
+            int num = 0;
+            // Собираем многозначное число
+            while (isdigit(symbol)) {
+                num = num * 10 + (symbol - '0');
+                i++;
+                symbol = expression[i];
+            }
+            push(num);  // Добавляем полное число в стек
+            continue; // Продолжаем с новым символом
         }  
         else if (is_operator(symbol)) {  
             operand2 = pop();
             operand1 = pop();  
-            switch(symbol) {  
+            if (operand2 == -1 || operand1 == -1) {
+                printf("Ошибка: недостаточно операндов\n");
+                return 0; // Завершение выполнения в случае ошибки
+            }
+            switch (symbol) {  
                 case '+': result = operand1 + operand2; break;  
                 case '-': result = operand1 - operand2; break;  
                 case '*': result = operand1 * operand2; break;  
-                case '/': result = operand1 / operand2; break;  
-            }  
+                case '/': 
+                    if (operand2 != 0) {
+                        result = operand1 / operand2; 
+                    } else {
+                        printf("Ошибка: деление на ноль\n");
+                        return 0; // Завершение выполнения в случае ошибки
+                    }
+                    break;  
+            }
             push(result);  
-        }  
-        i++;  
-        symbol = expression[i];  
-    }  
-    result = pop();  
-    return result;  
+        }
+        i++;
+    }
+
+    if (top != 0) {
+        printf("Ошибка: недопустимое выражение\n");
+        return 0; // Завершение выполнения в случае ошибки
+    }
+
+    return pop();  
 }  
-  
+
 int main() {  
     char buffer[256];
     FILE *file = fopen("input.txt", "r");
+    
     if(file)
     {
         fgets(buffer, 256, file);
         fclose(file);
     }
+    
     int result = evaluate(buffer);  
-    printf("Result = %d\n", result);  
-    return 0;  
+    printf("Результат = %d\n", result);  
+    return EXIT_SUCCESS;  
 }
