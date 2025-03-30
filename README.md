@@ -1,2 +1,2 @@
-Programming Languages & Translation Methods \n
+Programming Languages & Translation Methods <br />
 Языки Программирования и Методы Трансляции
