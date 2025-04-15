@@ -11,7 +11,7 @@ void yyerror(char *);
 "-"         { return MINUS; }
 [ \t]       ; 
 \n          { return EOL; }
-.           { yyerror("Invalid character"); }
+.           { yyerror("Неправильный символ"); }
 
 %%
 

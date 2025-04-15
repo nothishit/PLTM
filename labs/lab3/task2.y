@@ -20,7 +20,7 @@ input:
         ;
 
 line:       EOL
-        | expr EOL      { printf("Result: %d\n", $1); }
+        | expr EOL      { printf("Равно: %d\n", $1); }
         ;
 
 expr:       expr PLUS NUMBER      { $$ = $1 + $3; }
@@ -30,7 +30,7 @@ expr:       expr PLUS NUMBER      { $$ = $1 + $3; }
 %%
 
 void yyerror(char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+    fprintf(stderr, "Ошибка: %s\n", s);
 }
 
 int main(void) {
